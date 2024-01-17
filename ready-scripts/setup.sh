@@ -4,6 +4,9 @@ npm install -y -g aws-cdk-local aws-cdk
 
 awslocal secretsmanager create-secret --name "db-secret" --secret-string '{"username":"dummyuser", "password": "dummypassword"}' --region us-east-1
 
+rm /var/lib/localstack/rds_bug/cdk.context.json
+rm -rf /var/lib/localstack/rds_bug/cdk.out
+
 # Execute CDK project
 pip install -r /var/lib/localstack/rds_bug/requirements.txt
 cd /var/lib/localstack/rds_bug && cdklocal bootstrap --app "python3 app.py" --region us-east-1

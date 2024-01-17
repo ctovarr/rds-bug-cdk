@@ -1,0 +1,26 @@
+version: "3.9"
+services:
+  dbhost:
+    image: "postgres:14.3"
+    container_name: postgres-db-for-rds-bug
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    environment:
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=pass
+      - POSTGRES_DB=mydatabase
+    ports:
+      - "5432:5432"
+
+  migrate-db:
+    image: migrate/migrate:4
+    container_name: migrate-db-for-rds-bug
+    volumes:
+      - ./migrations:/migrations
+    command: --path /migrations -database postgres://user:pass@dbhost:5432/mydatabase?sslmode=disable up
+    depends_on:
+      dbhost:
+        condition: service_healthy
